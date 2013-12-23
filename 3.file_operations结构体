@@ -3,18 +3,22 @@
  
     struct file_operations
     {
-          struct module *owner;
-          loff_t (*llseek) (struct file *, loff_t, int);
-          ssize_t (*read) (struct file *, char __user *, size_t, loff_t*);
-          ssize_t (*write) (struct file *,const char __user *, size_t, loff_t*);
-          ssize_t (*aio_read) (struct kiocb *, char __user *, size_t, loff_t);
-          ssize_t (*aio_write) (struct kiocb *, const char __user *, size_t, loff_t);
-          int (*readdir) (struct file *, void *, filldir_t);
-          unsigned int(*poll) (struct file *, struct poll_table_struct*);
-          int (*ioctl) (struct inode *, struct file *, unsigned int, unsigned long);
-          long (*unlocked_ioctl) (struct file *, unsigned int, unsigned long);
-          long (*compat_ioctl) (struct file *, unsigned int, unsigned long);
-          int (*mmap) (struct file *, struct vm_area_struct);
+          struct module *owner; /拥有该结构的模块指针，一般为THIS_MODULES
+          loff_t (*llseek) (struct file *, loff_t, int); /用来修改文件当前读写位置，并将新位置返回，出错返回一个负值
+          ssize_t (*read) (struct file *, char __user *, size_t, loff_t*); /从设备中读取数据，成功时返回读取的字节数
+          ssize_t (*write) (struct file *,const char __user *, size_t, loff_t*);/向设备发送数据，成功时该函数返回写入的字节数
+          ssize_t (*aio_read) (struct kiocb *, char __user *, size_t, loff_t); /初始化一个异步的读取操作
+          ssize_t (*aio_write) (struct kiocb *, const char __user *, size_t, loff_t); /初始化一个异步的写入操作
+          int (*readdir) (struct file *, void *, filldir_t);  /仅用于读取目录，对于设备文件，该字段为NULL
+          unsigned int(*poll) (struct file *, struct poll_table_struct*); /轮询函数，判断目前是否可以进行非阻塞的读取或者写入
+          一般用于询问设备是否可被非阻塞地立即读写，当询问的条件未触发时，用户空间进行select（）和poll（）系统调用
+          将引起进程的阻塞
+          int (*ioctl) (struct inode *, struct file *, unsigned int, unsigned long); /设备I/O控制命令，既不是读也不是写操作
+          当调用成功，返回给调用程序一个非负值
+          long (*unlocked_ioctl) (struct file *, unsigned int, unsigned long);/不使用BLK的文件系统，将使用此种函数指针代替ioctl
+          long (*compat_ioctl) (struct file *, unsigned int, unsigned long); /64位系统上的32位ioctl调用
+          int (*mmap) (struct file *, struct vm_area_struct); /将设备内存映射到进程内存中，如果设备驱动未实现此函数，用户进行mmap
+          调用时，系统调用将获得-ENODEV的返回值，这个函数对于帧缓冲等设备特别有意义
           int (*open) (struct inode *, struct file*);
           int (*flush) (struct file *);
           int (*release) (struct inode *, struct file *);
