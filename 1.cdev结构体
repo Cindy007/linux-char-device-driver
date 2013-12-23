@@ -1,0 +1,59 @@
+1.1 cdev 结构体
+
+    2.6内核中，使用cdev结构体描述一个字符设备，cdev结构体的定义如下
+    
+      struct cdev{
+        
+          struct kobject kobj;   /内嵌的kobject对象
+          struct module ×owner； /所属模块
+          struct file_operations ×ops；/文件操作结构体，定义了字符设备驱动提供给虚拟文件系统的接口函数
+          struct list_head list；
+          dev_t dev； /设备号,32位，其中12位主设备号，20位次设备号
+          unsigned int count；
+          };
+          
+      用下列宏可以从dev_t获得主设备号和次设备号
+      
+      MAJOR(dev_t dev)
+      MINOR(dev_t dev)
+      
+      用下列宏则可以通过主设备号和次设备号生成dev_t
+      
+      MKDEV（int major， int minor）
+      
+      
+    2.6内核提供了一组函数用于操作cdev结构体
+      
+        void cdev_init(struct cdev*, struct file_operations*);
+        struct cdev *cdev_alloc(void);
+        void cdev_put(struct cdev *p);
+        int cdev_add(struct cdev*, dev_t, unsigned);
+        void cdev_del(struct cdev*);
+        
+        cdev_init用于初始化cdev成员，并建立cdev和file_operations之间的连接，其源代码如下
+        
+        void cdev_init(struct cdev *cdev, struct file_operations *fops)
+        {
+             memset(cdev, 0, sizeof *cdev);
+             INIT_LIST_HEAD(&cdev->list);
+             kobject_init(&cdev->kobject, &ktype_cdev_default);
+             cdev->ops = fops; /将传入的文件操作结构体指针赋值给cdev的×ops
+        }
+             
+             
+        cdev_alloc()用于动态申请一个cdev内存
+        
+        struct cdev *cdev_alloc(void)
+        {
+             
+             
+             
+             
+             
+             
+             
+             
+             
+             
+             
+             
