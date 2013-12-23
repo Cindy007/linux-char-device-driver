@@ -27,8 +27,8 @@
         void cdev_init(struct cdev*, struct file_operations*);
         struct cdev *cdev_alloc(void);
         void cdev_put(struct cdev *p);
-        int cdev_add(struct cdev*, dev_t, unsigned);
-        void cdev_del(struct cdev*);
+        int cdev_add(struct cdev*, dev_t, unsigned); /向系统添加一个cdev
+        void cdev_del(struct cdev*);                 /向系统删除一个cdev
         
         cdev_init用于初始化cdev成员，并建立cdev和file_operations之间的连接，其源代码如下
         
@@ -45,7 +45,15 @@
         
         struct cdev *cdev_alloc(void)
         {
-             
+             struct cdev *p = kzalloc(sizeof(struct cdev), GFP_KERNEL);
+             if(p){
+                 INIT_LIST_HEAD(&p->list);
+                 kobject_init(&p->kobj, &ktype_cdev_dynamic);
+                 }
+            return p;
+        }
+        
+        
              
              
              
