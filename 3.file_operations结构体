@@ -1,0 +1,15 @@
+
+ file_operations结构体中的成员函数是字符设备驱动程序设计的主体内容，这些函数实际会在应用程序进行linux的
+ open（）、write（）、read(）等系统调用时被调用
+ 
+    struct file_operations
+    {
+          struct module *owner;
+          loff_t (*llseek) (struct file *, loff_t, int);
+          ssize_t (*read) (struct file *, char __user *, size_t, loff_t*);
+          ssize_t (*write) (struct file *,const char __user *, size_t, loff_t*);
+          ssize_t (*aio_read) (struct kiocb *, char __user *, size_t, loff_t);
+          ssize_t (*aio_write) (struct kiocb *, const char __user *, size_t, loff_t);
+          int (*readdir) (struct file *, void *, filldir_t);
+          unsigned int(*poll) (struct file *, struct poll_table_struct*);
+          int (*ioctl) (
