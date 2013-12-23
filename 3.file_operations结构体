@@ -1,4 +1,3 @@
-
  file_operations结构体中的成员函数是字符设备驱动程序设计的主体内容，这些函数实际会在应用程序进行linux的
  open（）、write（）、read(）等系统调用时被调用
  
@@ -12,4 +11,24 @@
           ssize_t (*aio_write) (struct kiocb *, const char __user *, size_t, loff_t);
           int (*readdir) (struct file *, void *, filldir_t);
           unsigned int(*poll) (struct file *, struct poll_table_struct*);
-          int (*ioctl) (
+          int (*ioctl) (struct inode *, struct file *, unsigned int, unsigned long);
+          long (*unlocked_ioctl) (struct file *, unsigned int, unsigned long);
+          long (*compat_ioctl) (struct file *, unsigned int, unsigned long);
+          int (*mmap) (struct file *, struct vm_area_struct);
+          int (*open) (struct inode *, struct file*);
+          int (*flush) (struct file *);
+          int (*release) (struct inode *, struct file *);
+          int (*fsync) (struct file *, struct dentry *, int datasync);
+          int (*aio_fsync) (struct kiocb *, int datasync);
+          int (*fasync) (int, struct file *, int);
+          int (*lock) (struct file *, int ,struct file_lock*);
+          ssize_t (*sendpage) (struct file *, struct page *, int, size_t, loff_t *, int);
+          unsigned long(*get_unmapped_area)(struct file *, unsigned loong , unsigned long, unsigned long, unsigned long);
+          
+          int (*check_flags) (int);
+          int (*dir_notify) (struct file *filp, unsigned long arg);
+          int (*flock) (struct file *, int, struct file_lock*);
+          ssize_t (*splice_write) (struct pipe_inode_info *, struct file *, loff_t *, size_t, unsigned int);
+          ssize_t (*splice_read) (struct file *, loff_t *, struct pipe_inode_info *, size_t, unsigned int);
+          int (*setlease) (struct file *, long, struct file_lock **);
+          };
